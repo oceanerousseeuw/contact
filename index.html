@@ -87,7 +87,15 @@
       });
 
       QUnit.test("first entry tests", function (assert) {
-        assert.ok(false);
+          var contacts = Contact.Contacts.instance();
+          var iterator = contacts.iterator();
+          var contact = iterator.next();
+          var firstContact = $('tr').eq(1).children('td');
+          assert.ok(contact.firstName(), firstContact.eq(0));
+          assert.ok(contact.lastName(), firstContact.eq(1));
+          assert.ok(contact.phones(), firstContact.eq(2));
+          assert.ok(contact.mails(), firstContact.eq(3));
+          assert.ok(contact.tags, firstContact.eq(4));
       });
 
       QUnit.test("remove contact tests", function (assert) {
