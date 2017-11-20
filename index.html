@@ -64,7 +64,12 @@
     <!-- BEGIN - Les tests -->
     <script>
       QUnit.test("header tests", function (assert) {
-        assert.ok(false);
+          var myChild = $('th');
+          var header = ["First name", "Last name", "Phones", "Mails", "Tags", "Actions"];
+
+          for(var i=0; i< header.length; i++){
+            assert.ok(myChild.eq(i).text, header[i]);
+          }
       });
 
       QUnit.test("list tests", function (assert) {
