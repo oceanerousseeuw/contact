@@ -73,7 +73,17 @@
       });
 
       QUnit.test("list tests", function (assert) {
-        assert.ok(false);
+          var i=0;
+          var firstName = ["Eric", "Jacques", "Pierre", "Jean"];
+          var lastName = ["RAMAT", "DURAND", "DUPONT", "DUPOND"];
+          var contacts = Contact.Contacts.instance();
+          var iterator = contacts.iterator();
+          while(iterator.hasNext()){
+              var contact = iterator.next();
+              assert.ok(contact.firstName(), firstName[i]);
+              assert.ok(contact.lastName(), lastName[i]);
+              i++;
+          }
       });
 
       QUnit.test("first entry tests", function (assert) {
