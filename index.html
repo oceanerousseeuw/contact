@@ -99,7 +99,11 @@
       });
 
       QUnit.test("remove contact tests", function (assert) {
-        assert.ok(false);
+          var contacts = Contact.Contacts.instance();
+          var size = contacts.size();
+          var firstContact = $('tr').eq(1);
+          firstContact.find('a').click();
+        assert.ok(contacts.size(), size-1);
       });
 
       QUnit.test("sort contact tests", function (assert) {
