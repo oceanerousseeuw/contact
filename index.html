@@ -70,20 +70,20 @@
           var header = ["First name", "Last name", "Phones", "Mails", "Tags", "Actions"];
 
           for(var i=0; i< header.length; i++){
-            assert.ok(myChild.eq(i).text, header[i]);
+            assert.equal(myChild.eq(i).text(), header[i]);
           }
       });
 
       QUnit.test("list tests", function (assert) {
           var i=0;
-          var firstName = ["Eric", "Jacques", "Pierre", "Jean"];
-          var lastName = ["RAMAT", "DURAND", "DUPONT", "DUPOND"];
+          var firstName = $('td#cellFirstName');
+          var lastName = $('td#cellLastName');
           var contacts = Contact.Contacts.instance();
           var iterator = contacts.iterator();
           while(iterator.hasNext()){
               var contact = iterator.next();
-              assert.ok(contact.firstName(), firstName[i]);
-              assert.ok(contact.lastName(), lastName[i]);
+              assert.equal(contact.firstName(), firstName.eq(i).text());
+              assert.equal(contact.lastName(), lastName.eq(i).text());
               i++;
           }
       });
@@ -93,35 +93,67 @@
           var iterator = contacts.iterator();
           var contact = iterator.next();
           var firstContact = $('tr').eq(1).children('td');
-          assert.ok(contact.firstName(), firstContact.eq(0));
-          assert.ok(contact.lastName(), firstContact.eq(1));
-          assert.ok(contact.phones(), firstContact.eq(2));
-          assert.ok(contact.mails(), firstContact.eq(3));
-          assert.ok(contact.tags, firstContact.eq(4));
+          assert.equal(contact.firstName(), firstContact.eq(0).text());
+          assert.equal(contact.lastName(), firstContact.eq(1).text());
+
+          var i, tel = '';
+          for (i = 0; i < contact.phones().length; ++i) {
+              var phone = contact.phones()[i];
+
+              tel += phone.number();
+              if (phone.category() === Contact.PhoneCategory.PRO) {
+                  tel += '[PRO]';
+              } else {
+                  tel += '[PERSO]';
+              }
+              if (phone.type() === Contact.PhoneType.MOBILE) {
+                  tel += '[MOBILE]';
+              } else if (phone.type() === Contact.PhoneType.FAX) {
+                  tel += '[FAX]';
+              } else {
+                  tel += '[PHONE]';
+              }
+              if (i < contact.phones().length - 1) {
+                  tel += '/';
+              }
+          }
+          assert.equal(tel, firstContact.eq(2).text());
+
+          var k, adrmail = '';
+
+          for (k = 0; k < contact.mails().length; ++k) {
+              var mail = contact.mails()[k];
+
+              adrmail += mail.address();
+              if (mail.category() === Contact.MailCategory.PRO) {
+                  adrmail += '[PRO]';
+              } else {
+                  adrmail += '[PERSO]';
+              }
+              if (k < contact.phones().length - 1) {
+                  adrmail += '/';
+              }
+          }
+          assert.equal(adrmail, firstContact.eq(3).text());
+          assert.equal(contact.tags(), firstContact.eq(4).text());
       });
+
 
       QUnit.test("remove contact tests", function (assert) {
           var contacts = Contact.Contacts.instance();
           var size = contacts.size();
           var firstContact = $('tr').eq(1);
           firstContact.find('a').click();
-        assert.ok(contacts.size(), size-1);
+        assert.equal(contacts.size(), size-1);
       });
 
       QUnit.test("sort contact tests", function (assert) {
-          var i=0;
-          var j= 0;
-          var contacts = Contact.Contacts.instance();
-          var iterator = contacts.iterator();
-          var contact;
-          var lastNames = $('#cellLastName');
-          var sortContact = $('#button_sort');
-          sortContact.click();
+          var lastNames = $('td#cellLastName');
           lastNames.sort();
-          while(iterator.hasNext()) {
-              contact = iterator.next();
-              assert.ok(contact.lastName(), lastNames[j]);
-              j++
+          $('button_sort').click();
+          var newSort = $('td#cellLastName');
+          for(var j=0; j<newSort.length; j++){
+              assert.equal( lastNames.eq(j).text(), newSort.eq(j).text());
           }
       });
     </script>
