@@ -1,3 +1,7 @@
+body{
+    background-color: #848484 !important;
+}
+
 table tr td {
     background: #fff;
     padding: 6px;
@@ -8,4 +12,46 @@ table tr td {
 
 table tr:nth-child(2n) td {
     background: #fffa86;
+}
+
+h1{
+    margin: 20px !important;
+}
+
+.newContactForm{
+    margin: 20px;
+}
+
+label{
+    min-width: 85px;
+}
+
+.newContact{
+    margin-top: 5px;
+    margin-bottom : 5px;
+}
+
+.newContactForm button{
+    background-color: #3C510C;
+    border-color: #3C510C;
+    color: white;
+}
+
+.newContactForm button:hover{
+    background-color: #04B431;
+    border-color: #04B431;
+}
+
+.newContactForm a button{
+    background-color: #f0ad4e;
+    border-color: #eea236;
+}
+
+.newContactForm a button:hover{
+    background-color: #d58512;
+    border-color: #eea236;
+}
+
+.newContactForm #submit_a{
+    color: white;
 }

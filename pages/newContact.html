@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Contacts</title>
+
+    <link rel="stylesheet" href="../css/qunit-2.4.1.css">
+    <link rel="stylesheet" href="../css/contact.css">
+    <script src="../js/qunit-2.4.1.js"></script>
+    <script src="../js/jquery-2.2.4.min.js"></script>
+
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src="../js/bootstrap.min.js"></script>
+
+    <script src="../src/phone.js"></script>
+    <script src="../src/mail.js"></script>
+    <script src="../src/contact.js"></script>
+    <script src="../src/contacts.js"></script>
+    <script src="../src/builder.js"></script>
+    <script src="../src/contactIterator.js"></script>
+    <script src="../src/storage.js"></script>
+
+    <script src="../src/view.js"></script>
+    <script src="../src/model.js"></script>
+    <script src="../src/controller.js"></script>
+
+</head>
+<body>
+<h1>Formulaire de contact : </h1>
+<form class="newContactForm" method="post">
+    <div class="newContact">
+        <label for="firstName">First name :</label>
+        <input type="text" id="firstName"/>
+    </div>
+    <div class="newContact">
+        <label for="lastName">Last name :</label>
+        <input type="text" id="lastName"/>
+    </div>
+    <div class="newContact">
+        <label for="mails">Mails :</label>
+        <input type="text" id="mails"/>
+    </div>
+    <div class="button">
+        <button class="btn-warning btn" id="submit" type="submit"><a id="submit_a">Envoyer votre message</a></button>
+        <a href="../index.html" id="return" class="btn-warning btn">Retour</a>
+    </div>
+</form>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+
+<script>
+    var build = function () {
+        var model = new Contact.Model();
+        var view = new Contact.View(model);
+        var controller = new Contact.Controller(model, view);
+    };
+
+    var init = function () {
+        var contact = new Contact.Builder().createContactWithProfessionalMobile(
+            Contact.Gender.MR, 'Eric', 'RAMAT', '0616642258');
+
+        contact.addPhone(new Contact.Phone('0321465676', Contact.PhoneCategory.PRO, Contact.PhoneType.PHONE));
+        contact.addMail(new Contact.Mail('ramat@lisic.univ-littoral.fr', Contact.MailCategory.PRO));
+        contact.addMail(new Contact.Mail('eric.ramat@gmail.com', Contact.MailCategory.PERSO));
+        contact.addTag('prof');
+        Contact.Contacts.instance().add(contact);
+        Contact.Contacts.instance().add(new Contact.Builder().createContactWithProfessionalMobile(
+            Contact.Gender.MR, 'Jacques', 'DURAND', '0699785487'));
+        Contact.Contacts.instance().add(new Contact.Builder().createContactWithProfessionalMobile(
+            Contact.Gender.MR, 'Pierre', 'DUPONT', '0636532535'));
+        Contact.Contacts.instance().add(new Contact.Builder().createContactWithProfessionalMobile(
+            Contact.Gender.MR, 'Jean', 'DUPOND', '0612343000'));
+    };
+
+    $(document).ready(function () {
+        init();
+        build();
+        $("#submit").click(function() {
+            var firstName = $('#firstName').val();
+            var lastName = $('#lastName').val();
+            var email = $('#mails').val();
+            if(firstName !== "" && lastName !== "" && email !== ""){
+                var instance = Contact.Contacts.instance();
+                var newContact = new Contact.Builder().createContactWithProfessionalMail(Contact.Gender.MR,firstName,lastName,email);
+                instance.add(newContact);
+            }
+        });
+    });
+</script>
+
+<script>
+    QUnit.test("good formation of form", function (assert) {
+        assert.equal($('form.newContactForm').find('input').length, 3);
+        assert.equal($('#submit').text(), "Envoyer votre message");
+        assert.equal($('#return').text(), "Retour");
+    });
+
+    QUnit.test("add a new contact", function(assert) {
+        var contact = Contact.Contacts.instance();
+        var contactLength = contact.size();
+        $('#firstName').val("Océane");
+        $('#lastName').val("Rousseeuw");
+        $('#mails').val("test@mail.com");
+        $("#submit_a").click();
+        assert.equal(contact.size(), contactLength+1);
+    });
+
+    QUnit.test("no add contact when click on cancel button", function(assert) {
+        var contact = Contact.Contacts.instance();
+        var contactLength = contact.size();
+        $('#firstName').val("Océane");
+        $('#lastName').val("Rousseeuw");
+        $('#mails').val("test@mail.com");
+        $("#return").click();
+        assert.equal(contact.size(), contactLength);
+    });
+</script>
+</body>
